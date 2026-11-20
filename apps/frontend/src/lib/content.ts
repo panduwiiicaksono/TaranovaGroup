@@ -10,12 +10,17 @@ export async function getContent(locale: Locale = "de"): Promise<Content> {
   cacheTag("content");
   cacheLife("minutes");
   const defaults = defaultsFor(locale);
-  try {
-    const r = await fetch(`${API}/api/content/${locale}`);
-    if (!r.ok) return defaults;
-    const data = (await r.json()) as Partial<Content>;
-    return { ...defaults, ...data };
-  } catch {
-    return defaults;
+  // Batas waktu + satu kali ulang: backend yang lambat tidak boleh menggagalkan build/render
+  // (Next.js membatalkan fungsi cache yang berjalan > ~50 detik). Gagal = pakai teks bawaan.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const r = await fetch(`${API}/api/content/${locale}`, { signal: AbortSignal.timeout(8000) });
+      if (!r.ok) continue;
+      const data = (await r.json()) as Partial<Content>;
+      return { ...defaults, ...data };
+    } catch {
+      // coba lagi sekali
+    }
   }
+  return defaults;
 }
