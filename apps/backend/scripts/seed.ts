@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomBytes } from "node:crypto";
 import { writeFileSync, existsSync } from "node:fs";
-import { db, schema } from "./db/index.ts";
+import { db, schema } from "../src/db/index.ts";
 import * as home from "../../frontend/src/content/home.ts";
 
 const sections = {
