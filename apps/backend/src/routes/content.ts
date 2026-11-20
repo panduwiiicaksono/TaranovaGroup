@@ -19,7 +19,8 @@ publicContent.get("/:locale", async (c) => {
   const locale = localeSchema.safeParse(c.req.param("locale"));
   if (!locale.success) return c.json({ error: "bad locale" }, 400);
   const rows = await db.select().from(schema.siteContent).where(eq(schema.siteContent.locale, locale.data));
-  c.header("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+  // Frontend yang meng-cache (use cache + revalidate). Jangan di-cache CDN, agar edit admin langsung terbaca.
+  c.header("Cache-Control", "no-store");
   return c.json(Object.fromEntries(rows.map((r) => [r.key, r.data])));
 });
 

@@ -8,7 +8,10 @@ import { upload } from "./routes/upload.ts";
 export const app = new Hono().basePath("/api");
 
 app.use("*", cors({
-  origin: (process.env.CORS_ORIGINS ?? "http://localhost:3000").split(","),
+  origin: (process.env.CORS_ORIGINS ?? "http://localhost:3000")
+    .split(",")
+    .map((o) => o.trim().replace(/\/+$/, ""))
+    .filter(Boolean),
   allowHeaders: ["Content-Type", "Authorization"],
   allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 }));
