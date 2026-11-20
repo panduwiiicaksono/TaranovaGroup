@@ -5,11 +5,20 @@ export const DEFAULT_LOCALE: Locale = "de"; // mayoritas pengunjung: Jerman
 /** Awalan URL: Jerman di "/", Inggris di "/en". */
 export const prefix = (l: Locale) => (l === "en" ? "/en" : "");
 
-/** Link internal di konten ditulis netral ("/enquiry", "/", "#anchor"); di sini diberi awalan bahasa. */
+/** Alamat halaman legal per bahasa. Kunci = jalur netral yang dipakai di konten. */
+export const LEGAL_SLUGS: Record<string, Record<Locale, string>> = {
+  "/impressum": { de: "/impressum", en: "/legal-notice" },
+  "/datenschutz": { de: "/datenschutz", en: "/privacy-policy" },
+  "/cookies": { de: "/cookies", en: "/cookie-policy" },
+};
+
+/** Link internal di konten ditulis netral ("/enquiry", "/impressum", "#anchor"); di sini diberi awalan dan alamat sesuai bahasa. */
 export function localizeHref(l: Locale, href: string): string {
   if (!href.startsWith("/") || href.startsWith("//")) return href;
   if (href === "/") return l === "en" ? "/en" : "/";
-  return prefix(l) + href;
+  const [path, rest = ""] = href.split(/(?=[#?])/);
+  const slug = LEGAL_SLUGS[path]?.[l] ?? path;
+  return prefix(l) + slug + rest;
 }
 
 export const ui = {
