@@ -1,4 +1,4 @@
-export function FormEmbed({ src, title = "Enquiry form" }: { src: string; title?: string }) {
+export function FormEmbed({ src, title = "Enquiry form", note }: { src: string; title?: string; note?: string }) {
   return (
     <div>
       <iframe
@@ -8,7 +8,7 @@ export function FormEmbed({ src, title = "Enquiry form" }: { src: string; title?
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
         className="block h-[1000px] w-full rounded-lg border-0 bg-white sm:h-[880px]"
       />
-      <p className="m-0 mt-3 text-xs opacity-70">This form is provided by Microsoft Forms.</p>
+      {note && <p className="m-0 mt-3 text-xs opacity-70">{note}</p>}
     </div>
   );
 }

@@ -6,8 +6,8 @@ export type J = string | number | boolean | null | J[] | { [k: string]: J };
 type Obj = { [k: string]: J };
 
 const ICONS = ["company", "chat", "people", "contract", "shield", "arrival"];
-const SELECTS: Record<string, string[]> = { icon: ICONS, toStyle: ["solid", "gold"] };
-const LONG = new Set(["text", "quote", "note", "message", "caption"]);
+const SELECTS: Record<string, string[]> = { icon: ICONS, toStyle: ["solid", "gold"], kind: ["text", "row"] };
+const LONG = new Set(["text", "quote", "note", "message", "caption", "body", "intro", "notice"]);
 
 const label = (k: string) => k.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
 const input = "w-full rounded-lg border border-[#6B7788] bg-white px-3 py-2 text-sm text-navy";

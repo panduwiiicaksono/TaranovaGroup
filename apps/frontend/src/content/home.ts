@@ -1,3 +1,5 @@
+import { legalEn } from "./legal";
+
 // Konten Home (EN). Nanti digantikan data dari DB/CMS dengan bentuk (type) yang sama.
 export type IconKey = "company" | "chat" | "people" | "contract" | "shield" | "arrival";
 export type Img = { src?: string; alt?: string; hint: string };
@@ -19,9 +21,9 @@ export const site = {
     { href: "#kontakt", label: "Contact" },
   ],
   legalLinks: [
-    { href: "#", label: "Legal notice" },
-    { href: "#", label: "Privacy policy" },
-    { href: "#", label: "Cookie policy" },
+    { href: "/impressum", label: "Legal notice" },
+    { href: "/datenschutz", label: "Privacy policy" },
+    { href: "/cookies", label: "Cookie policy" },
   ],
 };
 
@@ -159,5 +161,5 @@ export const enquiryPage = {
   thanksText: "We have received your details and will get back to you.",
 };
 
-export const defaults = { site, hero, services, team, process, roles, requirements, references, contact, enquiryPage };
+export const defaults = { site, hero, services, team, process, roles, requirements, references, contact, enquiryPage, legal: legalEn };
 export type Content = typeof defaults;

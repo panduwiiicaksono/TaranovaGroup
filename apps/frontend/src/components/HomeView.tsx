@@ -8,14 +8,15 @@ import { Requirements } from "@/components/sections/Requirements";
 import { References } from "@/components/sections/References";
 import { Contact } from "@/components/sections/Contact";
 import { getContent } from "@/lib/content";
+import type { Locale } from "@/lib/i18n";
 
-export default async function Home() {
-  const c = await getContent();
+export async function HomeView({ locale }: { locale: Locale }) {
+  const c = await getContent(locale);
   return (
     <main>
       <div className="bg-navy text-cream">
-        <Header site={c.site} />
-        <Hero data={c.hero} />
+        <Header site={c.site} locale={locale} />
+        <Hero data={c.hero} locale={locale} />
       </div>
       <Services data={c.services} />
       <Team data={c.team} />
@@ -23,7 +24,7 @@ export default async function Home() {
       <Roles data={c.roles} />
       <Requirements data={c.requirements} />
       <References data={c.references} />
-      <Contact contact={c.contact} site={c.site} />
+      <Contact contact={c.contact} site={c.site} locale={locale} />
     </main>
   );
 }

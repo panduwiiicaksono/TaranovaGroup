@@ -2,15 +2,18 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import type { Content } from "@/content/home";
+import { localizeHref, ui, type Locale } from "@/lib/i18n";
 import { isEmail, submitEnquiry, type EnquiryInput } from "@/lib/enquiry";
 import { Mark } from "./ui/primitives";
+import { RichText } from "./RichText";
 
 type Errors = Partial<Record<"company" | "contact" | "email" | "occupations" | "consent", string>>;
 
 const field = "min-h-12 w-full box-border rounded-lg border border-[#6B7788] bg-white px-3.5 text-navy hover:border-navy";
 const label = "text-sm font-semibold";
 
-export function EnquiryForm({ page: enquiryPage }: { page: Pick<Content["enquiryPage"], "thanksTitle" | "thanksText"> }) {
+export function EnquiryForm({ page: enquiryPage, locale }: { page: Pick<Content["enquiryPage"], "thanksTitle" | "thanksText">; locale: Locale }) {
+  const t = ui[locale].form;
   const [errors, setErrors] = useState<Errors>({});
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
@@ -26,11 +29,11 @@ export function EnquiryForm({ page: enquiryPage }: { page: Pick<Content["enquiry
       consent: f.get("consent") === "on",
     };
     const found: Errors = {};
-    if (!data.company) found.company = "Please enter your company.";
-    if (!data.contact) found.contact = "Please enter a contact person.";
-    if (!isEmail(data.email)) found.email = "Please enter a valid email.";
-    if (!data.occupations) found.occupations = "Please enter at least one occupation.";
-    if (!data.consent) found.consent = "Consent is required.";
+    if (!data.company) found.company = t.errCompany;
+    if (!data.contact) found.contact = t.errContact;
+    if (!isEmail(data.email)) found.email = t.errEmail;
+    if (!data.occupations) found.occupations = t.errOccupations;
+    if (!data.consent) found.consent = t.errConsent;
     setErrors(found);
     if (Object.keys(found).length) return;
     setState("sending");
@@ -43,7 +46,7 @@ export function EnquiryForm({ page: enquiryPage }: { page: Pick<Content["enquiry
         <Mark size={40} />
         <h2 className="m-0 font-serif text-[32px] font-normal">{enquiryPage.thanksTitle}</h2>
         <p className="m-0 text-[17px] text-ink-2">{enquiryPage.thanksText}</p>
-        <Link href="/" className="font-semibold">Back to home page</Link>
+        <Link href={localizeHref(locale, "/")} className="font-semibold">{t.backHomeLink}</Link>
       </div>
     );
   }
@@ -57,56 +60,54 @@ export function EnquiryForm({ page: enquiryPage }: { page: Pick<Content["enquiry
       <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
       <div className="flex flex-wrap gap-5">
         <div className="flex flex-[1_1_220px] flex-col gap-1.5">
-          <label htmlFor="firma" className={label}>Company *</label>
+          <label htmlFor="firma" className={label}>{t.company}</label>
           <input id="firma" name="company" type="text" autoComplete="organization" className={field} {...aria("company")} />{err("company")}
         </div>
         <div className="flex flex-[1_1_220px] flex-col gap-1.5">
-          <label htmlFor="person" className={label}>Contact person *</label>
+          <label htmlFor="person" className={label}>{t.contactPerson}</label>
           <input id="person" name="contact" type="text" autoComplete="name" className={field} {...aria("contact")} />{err("contact")}
         </div>
       </div>
       <div className="flex flex-wrap gap-5">
         <div className="flex flex-[1_1_220px] flex-col gap-1.5">
-          <label htmlFor="mail" className={label}>Email *</label>
+          <label htmlFor="mail" className={label}>{t.email}</label>
           <input id="mail" name="email" type="email" autoComplete="email" className={field} {...aria("email")} />{err("email")}
         </div>
         <div className="flex flex-[1_1_220px] flex-col gap-1.5">
-          <label htmlFor="tel" className={label}>Phone (optional)</label>
+          <label htmlFor="tel" className={label}>{t.phone}</label>
           <input id="tel" name="phone" type="tel" autoComplete="tel" className={field} />
         </div>
       </div>
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="beruf" className={label}>Training occupation(s) *</label>
+        <label htmlFor="beruf" className={label}>{t.occupations}</label>
         <input id="beruf" name="occupations" type="text" className={field} {...aria("occupations")} />{err("occupations")}
       </div>
       <div className="flex flex-wrap gap-5">
         <div className="flex flex-[1_1_220px] flex-col gap-1.5">
-          <label htmlFor="anzahl" className={label}>Number of training places</label>
+          <label htmlFor="anzahl" className={label}>{t.places}</label>
           <select id="anzahl" name="places" className={field}>
-            <option>1</option><option>2 to 5</option><option>6 to 10</option><option>More than 10</option>
+            {t.placesOptions.map((o) => <option key={o}>{o}</option>)}
           </select>
         </div>
         <div className="flex flex-[1_1_220px] flex-col gap-1.5">
-          <label htmlFor="start" className={label}>Preferred start date</label>
+          <label htmlFor="start" className={label}>{t.start}</label>
           <input id="start" name="start" type="text" className={field} />
         </div>
       </div>
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="nachricht" className={label}>Message (optional)</label>
+        <label htmlFor="nachricht" className={label}>{t.message}</label>
         <textarea id="nachricht" name="message" rows={4} className={`${field} resize-y py-3`} />
       </div>
       <div className="flex flex-col gap-1.5">
         <div className="flex items-start gap-3">
           <input id="einwilligung" name="consent" type="checkbox" className="mt-0.5 h-[22px] w-[22px] flex-none" {...aria("consent")} />
-          <label htmlFor="einwilligung" className="text-sm text-ink-2">
-            I agree that Taranova uses my details to handle this enquiry. [Privacy policy: link to follow]
-          </label>
+          <label htmlFor="einwilligung" className="text-sm text-ink-2"><RichText text={t.consent} locale={locale} /></label>
         </div>
         {err("consent")}
       </div>
-      {state === "error" && <p role="alert" className="m-0 text-sm text-[#B42318]">Something went wrong. Please try again.</p>}
+      {state === "error" && <p role="alert" className="m-0 text-sm text-[#B42318]">{t.errGeneric}</p>}
       <button type="submit" disabled={state === "sending"} className="min-h-[52px] self-start rounded-lg bg-navy px-7 text-base font-semibold text-white disabled:opacity-60">
-        {state === "sending" ? "Sending…" : "Send enquiry"}
+        {state === "sending" ? t.sending : t.send}
       </button>
     </form>
   );

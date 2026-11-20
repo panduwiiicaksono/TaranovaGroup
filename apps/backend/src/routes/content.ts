@@ -7,7 +7,7 @@ import { revalidateFrontend } from "../notify.ts";
 
 export const SECTION_KEYS = [
   "site", "hero", "services", "team", "process", "roles",
-  "requirements", "references", "contact", "enquiryPage",
+  "requirements", "references", "contact", "enquiryPage", "legal",
 ] as const;
 const keySchema = z.enum(SECTION_KEYS);
 const localeSchema = z.enum(["en", "de"]);
