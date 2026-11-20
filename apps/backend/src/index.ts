@@ -8,8 +8,8 @@ import { upload } from "./routes/upload.ts";
 export const app = new Hono().basePath("/api");
 
 app.use("*", cors({
-  origin: (process.env.CORS_ORIGINS ?? "http://localhost:3000")
-    .split(",")
+  // Asal yang diizinkan: CORS_ORIGINS (dipisah koma) + FRONTEND_URL. Spasi dan "/" di akhir diabaikan.
+  origin: [...(process.env.CORS_ORIGINS ?? "http://localhost:3000").split(","), process.env.FRONTEND_URL ?? ""]
     .map((o) => o.trim().replace(/\/+$/, ""))
     .filter(Boolean),
   allowHeaders: ["Content-Type", "Authorization"],
