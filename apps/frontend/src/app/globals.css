@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-navy: #17273c;
+  --color-navy-deep: #101d30;
+  --color-navy-mid: #1e3350;
+  --color-navy-line: #31425a;
+  --color-cream: #f7f5ef;
+  --color-sand: #e9e4d6;
+  --color-line: #d8d2c3;
+  --color-dash: #b9b2a0;
+  --color-gold: #c08e43;
+  --color-gold-dark: #a47530;
+  --color-gold-text: #7e5719;
+  --color-ink-2: #3a4a5e;
+  --color-mist: #b9c1cc;
+  --color-mist-2: #d3d8df;
+  --color-sand-text: #e7e2d6;
+  --font-sans: var(--font-plex), system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), Georgia, serif;
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body {
+  margin: 0;
+  background: #f7f5ef;
+  color: #17273c;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+a { transition: background-color .15s, border-color .15s, color .15s, filter .15s; }
+:focus-visible { outline: 2px solid #d4a55a; outline-offset: 2px; }
+button { cursor: pointer; transition: filter .15s, transform .15s; }
+button:hover:not(:disabled) { filter: brightness(1.1); }
+button:active:not(:disabled) { transform: translateY(1px); }
+input[type="checkbox"] { accent-color: #c08e43; }
+input[type="text"]:focus-visible, input[type="email"]:focus-visible, input[type="tel"]:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: none; border-color: #c08e43 !important; box-shadow: 0 0 0 3px rgba(192,142,67,.3);
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
