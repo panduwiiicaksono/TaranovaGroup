@@ -1,0 +1,5 @@
+{
+  // Konfigurasi untuk file di folder ini (dipakai editor VS Code dan `npm run typecheck`).
+  "extends": "../tsconfig.json",
+  "include": ["./**/*.ts", "../src/**/*.ts", "../drizzle.config.ts"]
+}
