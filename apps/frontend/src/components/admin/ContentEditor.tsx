@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { adminApi } from "@/lib/adminApi";
 import { Node, type J } from "./JsonEditor";
 import { defaultsFor } from "@/content/defaults";
+import { orderLike } from "@/lib/orderLike";
 import type { Locale } from "@/lib/i18n";
 
 // [kunci, label Inggris, label Jerman]. Label Jerman mengikuti istilah di menu situs Jerman.
@@ -33,7 +34,7 @@ export function ContentEditor() {
   useEffect(() => {
     let alive = true;
     adminApi.getSection(locale, key)
-      .then((d) => { if (alive) { setData(d); setFresh(false); setDirty(false); setState("idle"); } })
+      .then((d) => { if (alive) { setData(orderLike(d, (defaultsFor(locale) as Record<string, unknown>)[key])); setFresh(false); setDirty(false); setState("idle"); } })
       .catch((e: Error & { status?: number }) => {
         if (!alive) return;
         if (e.status === 404) {
