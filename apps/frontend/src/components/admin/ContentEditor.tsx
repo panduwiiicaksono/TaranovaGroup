@@ -9,8 +9,8 @@ import type { Locale } from "@/lib/i18n";
 // Petunjuk singkat per section (ditampilkan di atas editor).
 const HINTS: Record<string, Record<Locale, string>> = {
   roles: {
-    en: "Each card can be a text diagram or an uploaded image. Upload an image in a card to show it instead of the text; remove the image to go back to the text version.",
-    de: "Jede Karte kann ein Textdiagramm oder ein hochgeladenes Bild sein. Laden Sie in einer Karte ein Bild hoch, um es statt des Textes anzuzeigen; entfernen Sie das Bild, um zur Textversion zurückzukehren.",
+    en: "Each card is an uploaded image plus a short label. The label is shown while the image is loading (slow connection), if it cannot be loaded, and as the image's alt text.",
+    de: "Jede Karte besteht aus einem hochgeladenen Bild und einer kurzen Beschriftung. Die Beschriftung erscheint, solange das Bild lädt (langsame Verbindung) oder wenn es nicht geladen werden kann, und dient als Alternativtext des Bildes.",
   },
 };
 

@@ -88,24 +88,8 @@ export const roles = {
   title: "Clear roles, clear money",
   text: "Taranova and the partners each do their own part and are paid separately for it. The partners focus on preparation; placement is Taranova's work alone.",
   cards: [
-    {
-      image: { hint: "Image: placement diagram" } as Img,
-      label: "Placement",
-      from: { name: "You", sub: "Training company" },
-      flow: "success-based fee",
-      to: { name: "Taranova", sub: "Selection, placement, onboarding" },
-      toStyle: "solid" as const,
-      note: "Taranova is paid by employers only.",
-    },
-    {
-      image: { hint: "Image: preparation diagram" } as Img,
-      label: "Preparation",
-      from: { name: "Candidate", sub: "prepares" },
-      flow: "from price list",
-      to: { name: "Partner", sub: "Language course, documents, departure" },
-      toStyle: "gold" as const,
-      note: "Partners only prepare and are paid by the candidate from a published price list. Taranova receives nothing from the candidate.",
-    },
+    { image: { hint: "Image: placement diagram" } as Img, label: "Placement" },
+    { image: { hint: "Image: preparation diagram" } as Img, label: "Preparation" },
   ],
 };
 
@@ -143,7 +127,7 @@ export const references = {
     quote: "[Quote from a training company or apprentice, with name, company and photo]",
     author: "First name, trade, company, place",
   },
-  video: { title: "Information video for companies", hint: "Placeholder: short explainer film, 90 seconds", url: "" },
+  video: { title: "Information video for companies", hint: "Placeholder: short explainer film, 90 seconds" },
 };
 
 export const contact = {

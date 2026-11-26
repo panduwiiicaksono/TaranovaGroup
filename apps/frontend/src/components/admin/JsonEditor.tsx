@@ -6,10 +6,38 @@ export type J = string | number | boolean | null | J[] | { [k: string]: J };
 type Obj = { [k: string]: J };
 
 const ICONS = ["company", "chat", "people", "contract", "shield", "arrival"];
-const SELECTS: Record<string, string[]> = { icon: ICONS, toStyle: ["solid", "gold"], kind: ["text", "row"] };
+const SELECTS: Record<string, string[]> = { icon: ICONS, kind: ["text", "row"] };
 const LONG = new Set(["text", "quote", "note", "message", "caption", "body", "intro", "notice"]);
 
-const label = (k: string) => k.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
+// Nama kolom yang lebih jelas daripada nama teknis.
+const LABELS: Record<string, string> = {
+  eyebrow: "Eyebrow (small text above the title)",
+  intro: "Intro (under the title)",
+  updated: "Updated line (shown at the bottom of the page; empty = hidden)",
+  notice: "Draft notice (box at the top of the page; empty = hidden)",
+  kind: "Block type (text = heading + text, row = label + value)",
+  hint: "Placeholder label (shown while no image)",
+  formUrl: "Microsoft Forms embed URL (empty = built-in form)",
+  register: "Register line (footer)",
+};
+// Kolom yang ada di data tetapi tidak berpengaruh pada situs: disembunyikan dari editor.
+// Jalur memakai "[]" untuk isi array. (Gambar kartu Roles tidak menampilkan label placeholder: tanpa gambar, kartu memakai versi teks.)
+// Label khusus per jalur kolom (menimpa nama umum di atas).
+const PATH_LABELS: Record<string, string> = {
+  "references.video.hint": "Caption (small text under the video title)",
+  "roles.cards[].label": "Label (shown while the image loads or if it cannot load; also the image's alt text)",
+};
+const HIDDEN = new Set([
+  "references.video.url",
+  // Kartu Roles hanya memakai image + label. Kolom lama (diagram teks) tetap ada di data lama tetapi tidak berpengaruh.
+  "roles.cards[].from", "roles.cards[].flow", "roles.cards[].to", "roles.cards[].toStyle", "roles.cards[].note",
+  "roles.cards[].image.alt", "roles.cards[].image.hint",
+]);
+
+/** Objek gambar = hanya berisi hint/src/alt. Objek lain yang kebetulan punya kolom "hint" (mis. blok video) bukan gambar. */
+const isImage = (v: Obj) => typeof v.hint === "string" && Object.keys(v).every((k) => k === "hint" || k === "src" || k === "alt");
+
+const label = (k: string) => LABELS[k] ?? k.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
 const input = "w-full rounded-lg border border-[#6B7788] bg-white px-3 py-2 text-sm text-navy";
 const btn = "rounded-md border border-line px-2.5 py-1 text-xs font-medium hover:bg-sand disabled:opacity-40";
 
@@ -22,7 +50,7 @@ function blank(v: J): J {
   return null;
 }
 
-function ImageField({ value, onChange }: { value: Obj; onChange: (v: Obj) => void }) {
+function ImageField({ value, onChange, showHint = true, showAlt = true }: { value: Obj; onChange: (v: Obj) => void; showHint?: boolean; showAlt?: boolean }) {
   const ref = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -47,20 +75,24 @@ function ImageField({ value, onChange }: { value: Obj; onChange: (v: Obj) => voi
           {src && <button type="button" className={btn} onClick={() => { const n = { ...value }; delete n.src; onChange(n); }}>Remove</button>}
           <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden onChange={(e) => pick(e.target.files?.[0])} />
         </div>
-        <label className="block text-xs text-ink-2">Alt text
-          <input className={`${input} mt-1`} value={String(value.alt ?? "")} onChange={(e) => onChange({ ...value, alt: e.target.value })} />
-        </label>
-        <label className="block text-xs text-ink-2">Placeholder label (shown while no image)
-          <input className={`${input} mt-1`} value={String(value.hint ?? "")} onChange={(e) => onChange({ ...value, hint: e.target.value })} />
-        </label>
+        {showAlt && (
+          <label className="block text-xs text-ink-2">Alt text
+            <input className={`${input} mt-1`} value={String(value.alt ?? "")} onChange={(e) => onChange({ ...value, alt: e.target.value })} />
+          </label>
+        )}
+        {showHint && (
+          <label className="block text-xs text-ink-2">Placeholder label (shown while no image)
+            <input className={`${input} mt-1`} value={String(value.hint ?? "")} onChange={(e) => onChange({ ...value, hint: e.target.value })} />
+          </label>
+        )}
         {err && <p className="m-0 text-xs text-[#B42318]">{err}</p>}
       </div>
     </div>
   );
 }
 
-export function Node({ name, value, onChange, depth = 0 }: { name: string; value: J; onChange: (v: J) => void; depth?: number }) {
-  const title = label(name);
+export function Node({ name, value, onChange, depth = 0, path = name }: { name: string; value: J; onChange: (v: J) => void; depth?: number; path?: string }) {
+  const title = PATH_LABELS[path] ?? label(name);
 
   if (typeof value === "string") {
     if (SELECTS[name]) return (
@@ -100,7 +132,7 @@ export function Node({ name, value, onChange, depth = 0 }: { name: string; value
                 <button type="button" className={btn} onClick={() => onChange(value.filter((_, j) => j !== i))}>Delete</button>
               </span>
             </div>
-            <Node name={typeof item === "string" ? "text" : "item"} value={item} onChange={(v) => set(i, v)} depth={depth + 1} />
+            <Node name={typeof item === "string" ? "text" : "item"} value={item} onChange={(v) => set(i, v)} depth={depth + 1} path={`${path}[]`} />
           </div>
         ))}
         <button type="button" className={btn} onClick={add}>+ Add</button>
@@ -108,12 +140,12 @@ export function Node({ name, value, onChange, depth = 0 }: { name: string; value
   }
 
   if (value && typeof value === "object") {
-    if (typeof value.hint === "string") return (
-      <div><p className="m-0 mb-1 text-sm font-semibold">{title}</p><ImageField value={value} onChange={onChange} /></div>);
+    if (isImage(value)) return (
+      <div><p className="m-0 mb-1 text-sm font-semibold">{title}</p><ImageField value={value} onChange={onChange} showHint={!HIDDEN.has(`${path}.hint`)} showAlt={!HIDDEN.has(`${path}.alt`)} /></div>);
     return (
       <div className={depth ? "space-y-3" : "space-y-5"}>
-        {Object.entries(value).filter(([k]) => k !== "src" || typeof value.hint !== "string").map(([k, v]) => (
-          <Node key={k} name={k} value={v} depth={depth + 1} onChange={(nv) => onChange({ ...value, [k]: nv })} />
+        {Object.entries(value).filter(([k]) => (k !== "src" || !isImage(value)) && !HIDDEN.has(`${path}.${k}`)).map(([k, v]) => (
+          <Node key={k} name={k} value={v} depth={depth + 1} path={`${path}.${k}`} onChange={(nv) => onChange({ ...value, [k]: nv })} />
         ))}
       </div>);
   }

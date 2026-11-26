@@ -82,24 +82,8 @@ export const defaultsDe: Content = {
     title: "Klare Rollen, klares Geld",
     text: "Zwei getrennte Geldflüsse, die sich nie kreuzen. Zwischen Taranova und den Partnern fließt kein Geld, und die Partner vermitteln nicht.",
     cards: [
-      {
-        image: { hint: "Bild: Vermittlung (Diagramm)" },
-        label: "Vermittlung",
-        from: { name: "Sie", sub: "Ausbildungsbetrieb" },
-        flow: "erfolgsbezogenes Honorar",
-        to: { name: "Taranova", sub: "Auswahl, Vermittlung, Onboarding" },
-        toStyle: "solid",
-        note: "Taranova wird ausschließlich von Arbeitgebern bezahlt.",
-      },
-      {
-        image: { hint: "Bild: Vorbereitung (Diagramm)" },
-        label: "Vorbereitung",
-        from: { name: "Kandidat", sub: "bereitet sich vor" },
-        flow: "nach Preisliste",
-        to: { name: "Partner", sub: "Sprachkurs, Unterlagen, Ausreise" },
-        toStyle: "gold",
-        note: "Partner bereiten nur vor und werden vom Kandidaten nach veröffentlichter Preisliste bezahlt. Taranova erhält vom Kandidaten nichts.",
-      },
+      { image: { hint: "Bild: Vermittlung (Diagramm)" }, label: "Vermittlung" },
+      { image: { hint: "Bild: Vorbereitung (Diagramm)" }, label: "Vorbereitung" },
     ],
   },
   requirements: {
@@ -135,7 +119,7 @@ export const defaultsDe: Content = {
       quote: "[Zitat eines Ausbildungsbetriebs oder Azubis, mit Name, Betrieb und Foto]",
       author: "Vorname, Beruf, Betrieb, Ort",
     },
-    video: { title: "Informationsvideo für Betriebe", hint: "Platzhalter: kurzer Erklärfilm, 90 Sekunden", url: "" },
+    video: { title: "Informationsvideo für Betriebe", hint: "Platzhalter: kurzer Erklärfilm, 90 Sekunden" },
   },
   contact: {
     title: "Sprechen Sie mit uns über Ihre offenen Ausbildungsplätze.",
