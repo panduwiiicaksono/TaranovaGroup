@@ -4,6 +4,7 @@ import { cors } from "hono/cors";
 import { adminContent, publicContent } from "./routes/content.ts";
 import { adminEnquiry, publicEnquiry } from "./routes/enquiry.ts";
 import { upload } from "./routes/upload.ts";
+import { me } from "./routes/me.ts";
 
 export const app = new Hono().basePath("/api");
 
@@ -22,6 +23,7 @@ app.route("/enquiry", publicEnquiry);
 app.route("/admin/content", adminContent);
 app.route("/admin/enquiries", adminEnquiry);
 app.route("/admin/upload", upload);
+app.route("/admin/me", me);
 app.onError((e, c) => { console.error(e); return c.json({ error: "server error" }, 500); });
 
 export default app;

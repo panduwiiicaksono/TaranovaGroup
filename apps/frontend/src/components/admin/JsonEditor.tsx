@@ -29,6 +29,8 @@ function ImageField({ value, onChange }: { value: Obj; onChange: (v: Obj) => voi
   const src = typeof value.src === "string" ? value.src : "";
   async function pick(f?: File) {
     if (!f) return;
+    if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(f.type)) { setErr("Use a JPG, PNG, WebP or AVIF image."); return; }
+    if (f.size > 4 * 1024 * 1024) { setErr("The image is larger than 4 MB. Please use a smaller file."); return; }
     setBusy(true); setErr("");
     try { onChange({ ...value, src: (await adminApi.upload(f)).url }); }
     catch (e) { setErr((e as Error).message); }
@@ -43,7 +45,7 @@ function ImageField({ value, onChange }: { value: Obj; onChange: (v: Obj) => voi
         <div className="flex gap-2">
           <button type="button" className={btn} disabled={busy} onClick={() => ref.current?.click()}>{busy ? "Uploading…" : src ? "Replace image" : "Upload image"}</button>
           {src && <button type="button" className={btn} onClick={() => { const n = { ...value }; delete n.src; onChange(n); }}>Remove</button>}
-          <input ref={ref} type="file" accept="image/*" hidden onChange={(e) => pick(e.target.files?.[0])} />
+          <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden onChange={(e) => pick(e.target.files?.[0])} />
         </div>
         <label className="block text-xs text-ink-2">Alt text
           <input className={`${input} mt-1`} value={String(value.alt ?? "")} onChange={(e) => onChange({ ...value, alt: e.target.value })} />

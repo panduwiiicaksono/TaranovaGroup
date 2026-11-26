@@ -1,5 +1,6 @@
 import { API } from "./config";
 import { supabase } from "./supabase";
+import { setLogoutReason } from "./sessionFlag";
 
 async function call(path: string, init: RequestInit = {}) {
   const { data } = await supabase.auth.getSession();
@@ -11,7 +12,15 @@ async function call(path: string, init: RequestInit = {}) {
     throw new Error("Cannot reach the server. Make sure the backend is running, then try again.");
   });
   const body = await r.json().catch(() => ({}));
-  if (!r.ok) throw Object.assign(new Error(body.error ?? `HTTP ${r.status}`), { status: r.status });
+  if (r.status === 401 && body.error === "session_expired") {
+    // Masa sesi maksimum habis (ditegakkan backend): keluar dan minta login ulang.
+    setLogoutReason("max");
+    void supabase.auth.signOut();
+  }
+  if (!r.ok) {
+    const msg = body.error === "session_expired" ? "Your session has ended. Please sign in again." : body.error ?? `HTTP ${r.status}`;
+    throw Object.assign(new Error(msg), { status: r.status });
+  }
   return body;
 }
 
@@ -24,6 +33,7 @@ export const adminApi = {
     f.set("file", file);
     return call("/upload", { method: "POST", body: f }) as Promise<{ url: string }>;
   },
+  me: () => call("/me") as Promise<{ expiresAt: string; maxHours: number }>,
   enquiries: () => call("/enquiries") as Promise<Enquiry[]>,
   setHandled: (id: string, handled: boolean) => call(`/enquiries/${id}`, { method: "PATCH", body: JSON.stringify({ handled }) }),
   remove: (id: string) => call(`/enquiries/${id}`, { method: "DELETE" }),
