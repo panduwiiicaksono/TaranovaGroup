@@ -3,8 +3,16 @@ import { useEffect, useState } from "react";
 import { adminApi } from "@/lib/adminApi";
 import { Node, type J } from "./JsonEditor";
 import { defaultsFor } from "@/content/defaults";
-import { orderLike } from "@/lib/orderLike";
+import { fillMissing, orderLike } from "@/lib/orderLike";
 import type { Locale } from "@/lib/i18n";
+
+// Petunjuk singkat per section (ditampilkan di atas editor).
+const HINTS: Record<string, Record<Locale, string>> = {
+  roles: {
+    en: "Each card can be a text diagram or an uploaded image. Upload an image in a card to show it instead of the text; remove the image to go back to the text version.",
+    de: "Jede Karte kann ein Textdiagramm oder ein hochgeladenes Bild sein. Laden Sie in einer Karte ein Bild hoch, um es statt des Textes anzuzeigen; entfernen Sie das Bild, um zur Textversion zurückzukehren.",
+  },
+};
 
 // [kunci, label Inggris, label Jerman]. Label Jerman mengikuti istilah di menu situs Jerman.
 const SECTIONS: [string, string, string][] = [
@@ -34,7 +42,7 @@ export function ContentEditor() {
   useEffect(() => {
     let alive = true;
     adminApi.getSection(locale, key)
-      .then((d) => { if (alive) { setData(orderLike(d, (defaultsFor(locale) as Record<string, unknown>)[key])); setFresh(false); setDirty(false); setState("idle"); } })
+      .then((d) => { if (alive) { { const tpl = (defaultsFor(locale) as Record<string, unknown>)[key]; setData(orderLike(fillMissing(d, tpl), tpl)); } setFresh(false); setDirty(false); setState("idle"); } })
       .catch((e: Error & { status?: number }) => {
         if (!alive) return;
         if (e.status === 404) {
@@ -90,6 +98,9 @@ export function ContentEditor() {
             </button>
           </div>
         </div>
+        {HINTS[key] && (
+          <p role="note" className="mb-4 rounded-lg border border-line bg-white p-3 text-sm text-ink-2">{HINTS[key][locale]}</p>
+        )}
         {fresh && state !== "loading" && (
           <p role="note" className="mb-4 rounded-lg border border-gold bg-white p-3 text-sm">
             Not saved yet for {locale === "de" ? "German" : "English"}: showing the default text. Edit it and press Save to publish this language version.

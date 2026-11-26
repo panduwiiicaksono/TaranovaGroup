@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Content } from "@/content/home";
 import { Container, Eyebrow, H2 } from "../ui/primitives";
 
@@ -9,7 +10,20 @@ export function Roles({ data: roles }: { data: Content["roles"] }) {
         <H2>{roles.title}</H2>
         <p className="m-0 mb-12 max-w-[680px] text-ink-2">{roles.text}</p>
         <div className="flex flex-wrap gap-6">
-          {roles.cards.map((c) => (
+          {roles.cards.map((c) =>
+            c.image?.src ? (
+              // Gambar yang diunggah dari admin menggantikan seluruh kartu (diagram + teks).
+              <figure key={c.label} className="m-0 flex-[1_1_480px] self-start overflow-hidden rounded-xl border border-line bg-white shadow-[0_1px_2px_rgba(23,39,60,.06)]">
+                <Image
+                  src={c.image.src}
+                  alt={c.image.alt || `${c.label}: ${c.from.name} → ${c.to.name}`}
+                  width={1200}
+                  height={800}
+                  sizes="(min-width: 1120px) 560px, 100vw"
+                  className="block h-auto w-full"
+                />
+              </figure>
+            ) : (
             <div key={c.label} className="flex-[1_1_480px] rounded-xl border border-line bg-white p-8 shadow-[0_1px_2px_rgba(23,39,60,.06)]">
               <p className="m-0 mb-6 text-[12px] uppercase tracking-[0.2em] text-gold-text">{c.label}</p>
               <div className="flex flex-wrap items-center gap-3">
@@ -26,7 +40,8 @@ export function Roles({ data: roles }: { data: Content["roles"] }) {
               </div>
               <p className="m-0 mt-6 text-[15px] text-ink-2">{c.note}</p>
             </div>
-          ))}
+            ),
+          )}
         </div>
       </Container>
     </section>

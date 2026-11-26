@@ -83,6 +83,7 @@ export const defaultsDe: Content = {
     text: "Zwei getrennte Geldflüsse, die sich nie kreuzen. Zwischen Taranova und den Partnern fließt kein Geld, und die Partner vermitteln nicht.",
     cards: [
       {
+        image: { hint: "Bild: Vermittlung (Diagramm)" },
         label: "Vermittlung",
         from: { name: "Sie", sub: "Ausbildungsbetrieb" },
         flow: "erfolgsbezogenes Honorar",
@@ -91,6 +92,7 @@ export const defaultsDe: Content = {
         note: "Taranova wird ausschließlich von Arbeitgebern bezahlt.",
       },
       {
+        image: { hint: "Bild: Vorbereitung (Diagramm)" },
         label: "Vorbereitung",
         from: { name: "Kandidat", sub: "bereitet sich vor" },
         flow: "nach Preisliste",

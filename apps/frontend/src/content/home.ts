@@ -89,6 +89,7 @@ export const roles = {
   text: "Taranova and the partners each do their own part and are paid separately for it. The partners focus on preparation; placement is Taranova's work alone.",
   cards: [
     {
+      image: { hint: "Image: placement diagram" } as Img,
       label: "Placement",
       from: { name: "You", sub: "Training company" },
       flow: "success-based fee",
@@ -97,6 +98,7 @@ export const roles = {
       note: "Taranova is paid by employers only.",
     },
     {
+      image: { hint: "Image: preparation diagram" } as Img,
       label: "Preparation",
       from: { name: "Candidate", sub: "prepares" },
       flow: "from price list",
