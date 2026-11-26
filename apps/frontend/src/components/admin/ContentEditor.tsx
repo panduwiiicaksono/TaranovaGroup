@@ -5,15 +5,25 @@ import { Node, type J } from "./JsonEditor";
 import { defaultsFor } from "@/content/defaults";
 import type { Locale } from "@/lib/i18n";
 
-const SECTIONS: [string, string][] = [
-  ["hero", "Hero"], ["services", "Service"], ["team", "Team"], ["process", "Process"],
-  ["roles", "Roles & costs"], ["requirements", "Requirements & timing"], ["references", "References"],
-  ["contact", "Contact"], ["site", "Header, footer & company"], ["enquiryPage", "Enquiry page"], ["legal", "Legal pages"],
+// [kunci, label Inggris, label Jerman]. Label Jerman mengikuti istilah di menu situs Jerman.
+const SECTIONS: [string, string, string][] = [
+  ["hero", "Hero", "Startbereich (Hero)"],
+  ["services", "Service", "Leistung"],
+  ["team", "Team", "Team"],
+  ["process", "Process", "Ablauf"],
+  ["roles", "Roles & costs", "Rollen & Kosten"],
+  ["requirements", "Requirements & timing", "Voraussetzungen & Zeitplan"],
+  ["references", "References", "Referenzen"],
+  ["contact", "Contact", "Kontakt"],
+  ["site", "Header, footer & company", "Kopfzeile, Fußzeile & Firma"],
+  ["enquiryPage", "Enquiry page", "Anfrageseite"],
+  ["legal", "Legal pages", "Rechtliche Seiten"],
 ];
 
 export function ContentEditor() {
   const [locale, setLocale] = useState<Locale>("de");
   const [key, setKey] = useState("hero");
+  const label = (k: string) => { const r = SECTIONS.find(([x]) => x === k); return r ? (locale === "de" ? r[2] : r[1]) : k; };
   const [fresh, setFresh] = useState(false); // true = belum pernah disimpan untuk bahasa ini, memakai teks bawaan
   const [data, setData] = useState<J | null>(null);
   const [dirty, setDirty] = useState(false);
@@ -62,14 +72,14 @@ export function ContentEditor() {
             </button>
           ))}
         </div>
-        {SECTIONS.map(([k, t]) => (
+        {SECTIONS.map(([k, en, de]) => (
           <button key={k} type="button" onClick={() => choose(k)}
-            className={`mb-1 block w-full rounded-lg px-3 py-2 text-left text-sm ${k === key ? "bg-navy font-semibold text-white" : "hover:bg-sand"}`}>{t}</button>
+            className={`mb-1 block w-full rounded-lg px-3 py-2 text-left text-sm ${k === key ? "bg-navy font-semibold text-white" : "hover:bg-sand"}`}>{locale === "de" ? de : en}</button>
         ))}
       </nav>
       <div className="min-w-0 flex-[3_1_480px]">
         <div className="sticky top-0 z-10 -mx-1 mb-5 flex items-center justify-between gap-3 bg-cream/95 px-1 py-3 backdrop-blur">
-          <h2 className="m-0 font-serif text-2xl font-normal">{SECTIONS.find(([k]) => k === key)?.[1]} <span className="text-base text-ink-2">({locale.toUpperCase()})</span></h2>
+          <h2 className="m-0 font-serif text-2xl font-normal">{label(key)} <span className="text-base text-ink-2">({locale.toUpperCase()})</span></h2>
           <div className="flex items-center gap-3 text-sm">
             {state === "saved" && <span className="text-[#067647]" role="status">Saved. Site updates shortly.</span>}
             {state === "error" && <span className="text-[#B42318]" role="alert">{msg}</span>}
